@@ -1,0 +1,83 @@
+import {StyleSheet, SafeAreaView} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+import {GiftedChat} from 'react-native-gifted-chat';
+import firestore from '@react-native-firebase/firestore';
+
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const route = useRoute();
+
+  const currentUserId = route.params.id;
+  const otherUserId = route.params.data.userId;
+
+  useEffect(() => {
+    const chatId = currentUserId + otherUserId;
+
+    const unsubscribe = firestore()
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(querySnapshot => {
+        const allMessages = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.() || new Date(),
+        }));
+        setMessages(allMessages);
+      });
+
+    return () => unsubscribe();
+  }, [currentUserId, otherUserId]);
+
+  const onSend = useCallback((messages = []) => {
+    const msg = messages[0];
+
+    if (!msg || !msg.text || !msg.createdAt || !currentUserId || !otherUserId) {
+      console.warn('Invalid message data:', {msg, currentUserId, otherUserId});
+      return;
+    }
+
+    const myMsg = {
+      _id: msg._id,
+      text: msg.text,
+      user: msg.user,
+      sendBy: currentUserId,
+      sendTo: otherUserId,
+      createdAt: msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt),
+    };
+
+    setMessages(previousMessages => GiftedChat.append(previousMessages, myMsg));
+
+    const chatId1 = currentUserId + otherUserId;
+    const chatId2 = otherUserId + currentUserId;
+
+    firestore()
+      .collection('chats')
+      .doc(chatId1)
+      .collection('messages')
+      .add(myMsg);
+
+    firestore()
+      .collection('chats')
+      .doc(chatId2)
+      .collection('messages')
+      .add(myMsg);
+  }, [currentUserId, otherUserId]);
+
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <GiftedChat
+        messages={messages}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: currentUserId,
+        }}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default Chat;
+
+const styles = StyleSheet.create({});

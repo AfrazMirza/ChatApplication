@@ -1,0 +1,206 @@
+import {StyleSheet, SafeAreaView, Text, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+// import GiftedChat from 'react-native-gifted-chat';
+import {GiftedChat} from 'react-native-gifted-chat';
+import firestore from '@react-native-firebase/firestore';
+
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const route = useRoute();
+  const data = route.params;
+
+  const userId1 = route.params.id;
+const userId2 = route.params.data.userId;
+const chatId = [userId1, userId2].sort().join('_');
+  console.log(data);
+
+  useEffect(
+    () => {
+      const unsubscribe = firestore()
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(querysnapshot => {
+        const allmessages = querysnapshot.docs.map
+        (doc => ({
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.() || new Date(), // Ensure Date object
+        }));
+        setMessages(allmessages);
+      });
+      return () => unsubscribe();
+    },
+    [chatId],
+  );
+
+  const onSend = useCallback((messages = []) => {
+    const msg = messages[0];
+  
+    if (!msg || !msg.text || !msg.createdAt || !userId1 || !userId2) {
+    //   console.warn({ msg, routeParams: route.params });
+      return;
+    }
+  
+    const myMsg = {
+      _id: msg._id,
+      text: msg.text,
+      user: msg.user,
+      sendBy: userId1,
+      sendTo: userId2,
+      createdAt: msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt),
+    };
+    setMessages(previousMessages => GiftedChat.append(previousMessages, myMsg));
+    firestore()
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages')
+      .add(myMsg);
+
+//     firestore()
+//       .collection('chats')
+//       .doc('' + route.params.data.userId + route.params.id)
+//       .collection('messages')
+//       .add(myMsg);
+  }, [chatId]);
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <GiftedChat
+        messages={messages}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: route.params.id,
+        }}
+      />
+    </SafeAreaView>
+  );
+};
+
+
+
+export default Chat;
+
+const styles = StyleSheet.create({});
+// return(
+{
+  /* <View style={{flex: 1}}>
+  <Text>Chat</Text> */
+}
+//   <SafeAreaView style={{flex: 1}}>
+//   <GiftedChat
+//  messages={messages}
+//  // eslint-disable-next-line no-shadow
+//  onSend={messages => onSend(messages)}
+//  user={{
+//    _id: 1,
+//   //  name: 'You',
+//  }}
+// />
+// </SafeAreaView>
+{
+  /* </View> */
+}
+
+// )
+// return (
+//   <View style={{flex: 1}}>
+//   </View>
+// )
+// }
+
+
+
+// this code is littlebit correct 
+
+// import {StyleSheet, SafeAreaView} from 'react-native';
+// import React, {useCallback, useEffect, useState} from 'react';
+// import {useRoute} from '@react-navigation/native';
+// import {GiftedChat} from 'react-native-gifted-chat';
+// import firestore from '@react-native-firebase/firestore';
+
+// const Chat = () => {
+//   const [messages, setMessages] = useState([]);
+//   const route = useRoute();
+
+//   // 🧠 Consistent chatId (sorted)
+//   const getChatId = () => {
+//     const user1 = route.params.id;
+//     const user2 = route.params.data.userId;
+//     return user1 > user2 ? user1 + user2 : user2 + user1;
+//   };
+
+//   useEffect(() => {
+//     const chatId = getChatId();
+
+//     const unsubscribe = firestore()
+//       .collection('chats')
+//       .doc(chatId)
+//       .collection('messages')
+//       .orderBy('createdAt', 'desc')
+//       .onSnapshot(snapshot => {
+//         const allMessages = snapshot.docs.map(doc => ({
+//           ...doc.data(),
+//           createdAt: doc.data().createdAt?.toDate?.() || new Date(),
+//         }));
+//         setMessages(allMessages);
+//       });
+
+//     return () => unsubscribe();
+//   },
+//    [route.params.id, route.params.data.userId]
+//   );
+
+//   const onSend = useCallback((newMessages = []) => {
+//     const msg = newMessages[0];
+//     const chatId = getChatId();
+
+//     const myMsg = {
+//       _id: msg._id,
+//       text: msg.text,
+//       user: {
+//         _id: route.params.id,
+//         name: route.params.data.name, // optional
+//       },
+//       sendBy: route.params.id,
+//       sendTo: route.params.data.userId,
+//       createdAt: new Date(),
+//     };
+
+//     setMessages(previousMessages => GiftedChat.append(previousMessages, myMsg));
+
+//     firestore()
+//       .collection('chats')
+//       .doc(chatId)
+//       .collection('messages')
+//       .add(myMsg);
+//   }, 
+//   [route.params.id, route.params.data.userId]
+// );
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <GiftedChat
+//         messages={messages}
+//         onSend={messages => onSend(messages)}
+//         user={{
+//           _id: route.params.id,
+//         }}
+//         placeholder="Type a message..."
+//         showUserAvatar
+//         alwaysShowSend
+//         scrollToBottom
+//       />
+//     </SafeAreaView>
+//   );
+// };
+
+// export default Chat;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+// });
+
