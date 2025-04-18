@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import React, {useEffect} from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
 import firebase from '@react-native-firebase/app';
-
+import './i18n';
 const App = () => {
   useEffect(() => {
     let config = {

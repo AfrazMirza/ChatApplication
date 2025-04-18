@@ -6,10 +6,12 @@ import { Image, Text } from 'react-native';
 import Updates from '../Tabs/Updates';
 import Community from '../Tabs/Community';
 import Calls from '../Tabs/Calls';
+import { useTranslation } from 'react-i18next';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  const {t} = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -47,14 +49,14 @@ const BottomTabNavigator = () => {
     tabBarIcon: ({ focused }) => {
       let icon;
     
-      if (route.name === 'Users') {
+      if (route.name === 'Chats') {
         icon = focused
-          ? require('../images/chat2.png') // focused icon
-          : require('../images/chat.png');       // default icon
-      } else if (route.name === 'Updates') {
+          ? require('../images/comment1.png') // focused icon
+          : require('../images/comment.png');       // default icon
+      } else if (route.name === 'Update') {
         icon = focused
-          ? require('../images/social-media.png')
-          : require('../images/social-media.png');
+          ? require('../images/status1.png')
+          : require('../images/status.png');
       } else if (route.name === 'Community') {
         icon = focused
           ? require('../images/community2.png')
@@ -63,6 +65,10 @@ const BottomTabNavigator = () => {
         icon = focused
           ? require('../images/voicecall2.png')
           : require('../images/voicecall.png');
+      } else if (route.name === 'Setting') {
+        icon = focused
+          ? require('../images/settings1.png')
+          : require('../images/settings.png');
       }
       // Add similar logic for other tabs if needed
     
@@ -86,11 +92,21 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Users" component={Users} />
-      <Tab.Screen name="Updates" component={Updates}/>
-      <Tab.Screen name="Community" component={Community}/>
-      <Tab.Screen name="Calls" component={Calls}/>
-      {/* <Tab.Screen name="Setting" component={Setting} /> */}
+      <Tab.Screen name="Chats" component={Users} options={{
+        tabBarLabel: t('chat')
+      }} />
+      <Tab.Screen name="Update" component={Updates} options={{
+        tabBarLabel: t('Update')
+      }}/>
+      <Tab.Screen name="Community" component={Community} options={{
+        tabBarLabel: t('Community')
+      }}/>
+      <Tab.Screen name="Calls" component={Calls} options={{
+        tabBarLabel: t('Calls')
+      }}/>
+      <Tab.Screen name="Setting" component={Setting} options={{
+        tabBarLabel: t('Setting')
+      }}/>
     </Tab.Navigator>
   );
 };

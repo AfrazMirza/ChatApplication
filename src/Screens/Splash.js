@@ -18,9 +18,13 @@ const Splash = () => {
       const id = await AsyncStorage.getItem('USERID');
       if(id !== null){
         navigation.navigate('Main');
-      }else{
-        navigation.navigate('SignIn');
       }
+      else{
+        navigation.navigate('LangSelector');
+      }
+      // else{
+      //   navigation.navigate('SignIn');
+      // }
     };
   return (
     <View style={styles.container}>

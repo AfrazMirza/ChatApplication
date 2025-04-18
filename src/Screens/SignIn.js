@@ -1,12 +1,26 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TextInput} from 'react-native-gesture-handler';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTranslation} from 'react-i18next';
+
+
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {t} = useTranslation();
+
+
+ 
 
   const loginUser = () => {
     firestore()
@@ -15,15 +29,15 @@ const SignIn = ({navigation}) => {
       .get()
       .then(res => {
         // if(res.docs !== []) {
-          if (res.docs.length > 0) {
-        console.log(JSON.stringify(res.docs[0].data()));
-        goToNext(
-          res.docs[0].data().name,
-          res.docs[0].data().email,
-          res.docs[0].data().userId,
-        );
-        }else{
-          Alert.alert('User Not Found')
+        if (res.docs.length > 0) {
+          console.log(JSON.stringify(res.docs[0].data()));
+          goToNext(
+            res.docs[0].data().name,
+            res.docs[0].data().email,
+            res.docs[0].data().userId,
+          );
+        } else {
+          Alert.alert('User Not Found');
         }
       })
       .catch(error => {
@@ -38,7 +52,7 @@ const SignIn = ({navigation}) => {
     await AsyncStorage.setItem('NAME', name);
     await AsyncStorage.setItem('EMAIL', email);
     await AsyncStorage.setItem('USERID', userId);
-    navigation.navigate('Main')
+    navigation.navigate('Main');
   };
 
   // useEffect(() => {
@@ -74,10 +88,12 @@ const SignIn = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>SignIn</Text>
+   
+      <Text style={styles.wish}>{t('welcome')}</Text>
+      <Text style={styles.title2}>{t('signInHeadline')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Email"
+        placeholder={t('email')}
         value={email}
         maxLength={25}
         placeholderTextColor={'#888'}
@@ -85,12 +101,14 @@ const SignIn = ({navigation}) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter Password"
+        placeholder={t('password')}
         value={password}
         maxLength={25}
         placeholderTextColor={'#888'}
         onChangeText={text => setPassword(text)}
       />
+
+      <Text style={styles.forgotPass}>{t('forgotPassword')}</Text>
 
       <TouchableOpacity
         // onPress={() => {
@@ -100,23 +118,27 @@ const SignIn = ({navigation}) => {
           loginUser();
         }}
         style={styles.AllBtnStyle}>
-        <Text style={styles.text}>SignUp</Text>
+        <Text style={styles.text}>{t('signinBtn')}</Text>
       </TouchableOpacity>
       <Text style={[styles.text1]}>
-        Already have an account?
-        <TouchableOpacity
+        {t('createNewUser')}
+        {/* <TouchableOpacity
           onPress={() => {
             navigation.navigate('LogOut');
           }}
-          style={{alignItems: 'center', justifyContent: 'center'}}>
-          <Text
-            style={{color: '#FA4616', fontSize: 12}}
-            //  style={{color: theme === 'light' ?'#FA4616' : '#FF5722', fontSize: 12}}
-          >
-            SIGN UP
-          </Text>
-        </TouchableOpacity>
+          style={{alignItems: 'center', justifyContent: 'center'}}> */}
+        <Text
+          onPress={() => {
+            navigation.navigate('LogOut');
+          }}
+          style={{color: '#FA4616', fontSize: 12}}
+          //  style={{color: theme === 'light' ?'#FA4616' : '#FF5722', fontSize: 12}}
+        >
+          {t('signupBtn')}
+        </Text>
+        {/* </TouchableOpacity> */}
       </Text>
+     
     </View>
   );
 };
@@ -129,11 +151,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: 30,
     paddingBottom: 40,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 30,
     color: '#FA4616',
     alignSelf: 'center',
+  },
+  wish: {
+    color: '#FA4616',
+    fontSize: 40,
+    fontWeight: '600',
+    paddingLeft: 10,
+  },
+  title2: {
+    color: '#FA4616',
+    fontSize: 30,
+    fontWeight: '500',
+    marginBottom: 40,
+    paddingLeft: 10,
+  },
+  forgotPass: {
+    alignSelf: 'flex-end',
+    fontSize: 16,
+    color: '#FA4616',
+    fontWeight: '500',
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
   AllBtnStyle: {
     borderRadius: 10,
@@ -164,9 +208,10 @@ const styles = StyleSheet.create({
     // width: '95%',
     // justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 6,
+    // paddingVertical: 6,
     paddingHorizontal: 12,
     marginHorizontal: 10,
     marginVertical: 10,
   },
+ 
 });

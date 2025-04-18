@@ -12,12 +12,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FlatList} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../Components/Header';
+import { useTranslation } from 'react-i18next';
 
 
 let id = '';
 const Users = () => {
   const [users, setUsers] = useState([]);
   const navigation = useNavigation();
+   const {t} = useTranslation();
+
   useEffect(() => {
     getUsers();
   }, []);
@@ -76,7 +79,7 @@ const Users = () => {
                   </TouchableOpacity>
                 </View>
       </View> */}
-      <Header title='Whatsapp'/>
+      <Header title= {t('Whatsapp')}/>
       <FlatList
         data={users}
         renderItem={renderUserItem}

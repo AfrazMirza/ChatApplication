@@ -3,12 +3,13 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Splash from '../Screens/Splash';
-import SignUp from '../Screens/SignUp';
+// import SignUp from '../Screens/SignUp';
 import SignIn from '../Screens/SignIn';
 import LogOut from '../Screens/LogOut';
 import Chat from '../Screens/Chat';
 import Screens from '../Screens/Screens';
 import BottomTabNavigator from './BottomTabNavigator';
+import LangSelector from '../Screens/LangSelector';
 
 const Stack = createStackNavigator()
 const AppNavigator = () => {
@@ -17,14 +18,13 @@ const AppNavigator = () => {
         <Stack.Navigator 
         screenOptions={{headerShown: false}}>
             <Stack.Screen name='Splash' component={Splash}/>
-            <Stack.Screen name='SignUp' component={SignUp}/>
+            {/* <Stack.Screen name='SignUp' component={SignUp}/> */}
             <Stack.Screen name='SignIn' component={SignIn}/>
             <Stack.Screen name='LogOut'component={LogOut}/>
             <Stack.Screen name="Main" component={BottomTabNavigator} />
             <Stack.Screen name='Screens' component={Screens}/>
+            <Stack.Screen name='LangSelector' component={LangSelector}/>
             <Stack.Screen name='Chat' component={Chat} options={{headerShown: true}}/>
-
-            
         </Stack.Navigator>
     </NavigationContainer>
   )

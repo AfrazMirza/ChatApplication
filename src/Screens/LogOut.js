@@ -12,6 +12,7 @@ import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 // import firebase from '@react-native-firebase/app';
 import {testFirestoreConnection} from '../utils/firebaseTest'; // optional
+import { useTranslation } from 'react-i18next';
 
 const LogOut = () => {
   const [name, setName] = useState('');
@@ -20,6 +21,7 @@ const LogOut = () => {
   const [password, setPassword] = useState('');
   const [cofirmPass, setConfirmPass] = useState('');
   const navigation = useNavigation();
+  const {t} = useTranslation();
 
   useEffect(() => {
     testFirestoreConnection(); // optional for testing connection
@@ -68,11 +70,12 @@ const LogOut = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>SignUp</Text>
+      <Text style={styles.wish}>{t('signupBtn')}</Text>
+      <Text style={styles.title2}>{t('signUpTitle')}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Enter Name"
+        placeholder={t('name')}
         value={name}
         maxLength={25}
         placeholderTextColor={'#888'}
@@ -80,7 +83,7 @@ const LogOut = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter Email"
+        placeholder={t('email')}
         value={email}
         maxLength={25}
         placeholderTextColor={'#888'}
@@ -88,7 +91,7 @@ const LogOut = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter Mobile No"
+        placeholder={t('mobileNo')}
         value={mobile}
         maxLength={10}
         keyboardType="phone-pad"
@@ -97,7 +100,7 @@ const LogOut = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter Password"
+        placeholder={t('password')}
         value={password}
         secureTextEntry
         maxLength={25}
@@ -106,7 +109,7 @@ const LogOut = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter Confirm Password"
+        placeholder={t('confirmPass')}
         value={cofirmPass}
         secureTextEntry
         maxLength={25}
@@ -121,14 +124,14 @@ const LogOut = () => {
           }
         }}
         style={styles.AllBtnStyle}>
-        <Text style={styles.text}>SignUp</Text>
+        <Text style={styles.text}>{t('signupBtn')}</Text>
       </TouchableOpacity>
 
       <Text style={styles.text1}>
-        Already have an account?
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.txt}> SIGN IN</Text>
-        </TouchableOpacity>
+        {t('signUpNewUser')}
+        {/* <TouchableOpacity onPress={() => navigation.goBack()}> */}
+          <Text onPress={() => navigation.goBack()} style={styles.txt}>{t('signinBtn')}</Text>
+        {/* </TouchableOpacity> */}
       </Text>
     </View>
   );
@@ -139,9 +142,23 @@ export default LogOut;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
     backgroundColor: '#fff',
     paddingTop: 30,
     paddingBottom: 40,
+  },
+  wish: {
+    color: '#FA4616',
+    fontSize: 40,
+    fontWeight: '600',
+    paddingLeft: 10,
+  },
+  title2: {
+    color: '#FA4616',
+    fontSize: 30,
+    fontWeight: '500',
+    marginBottom: 40,
+    paddingLeft: 10,
   },
   title: {
     fontSize: 30,
